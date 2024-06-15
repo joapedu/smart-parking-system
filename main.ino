@@ -50,9 +50,9 @@ void loop()
   monitorarVagas();
 
   if (vagasDisponiveis > 0) 
-	{
+  {
     if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) 
-		{
+    {
       String idCartao = leCartaoRFID();
       validaCartao(idCartao);
       rfid.PICC_HaltA();
@@ -67,12 +67,12 @@ void atualizaStatusVagas()
   lcd.setCursor(0, 1);
 
   if (vagasDisponiveis > 0) 
-	{
+  {
     lcd.print("VAGAS DISPONIVEIS: ");
     lcd.print(vagasDisponiveis);
   } 
-	else 
-	{
+  else 
+  {
     lcd.print("VAGAS INDISPONIVEIS");
   }
 }
@@ -82,7 +82,7 @@ String leCartaoRFID()
   String conteudo = "";
 
   for (byte i = 0; i < rfid.uid.size; i++) 
-	{
+  {
     conteudo += String(rfid.uid.uidByte[i], HEX);
   }
 
@@ -95,20 +95,20 @@ void validaCartao(String id)
   bool valido = false;
 
   for (int i = 0; i < sizeof(validIDs) / sizeof(validIDs[0]); i++) 
-	{
+  {
     if (id == validIDs[i]) 
-		{
+    {
       valido = true;
       break;
     }
   }
 
   if (valido) 
-	{
+  {
     acessoLiberado(id);
   } 
-	else 
-	{
+  else 
+  {
     acessoNegado();
   }
 }
@@ -152,7 +152,7 @@ void acessoNegado()
   invalidAttempts++;
 
   if (invalidAttempts >= maxInvalidAttempts) 
-	{
+  {
     tone(BUZZER, 1000, 2000); 
     lcd.setCursor(0, 1);
     lcd.print("TENTATIVAS EXCEDIDAS");
@@ -164,7 +164,7 @@ void monitorarVagas()
   int estadoSensor = digitalRead(SENSOR_FC51);
 
   if (estadoSensor == LOW && vagasDisponiveis < 1) 
-	{
+  {
     vagasDisponiveis++;
     atualizaStatusVagas();
   }
