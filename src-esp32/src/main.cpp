@@ -7,11 +7,7 @@
 
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
-
-#define WIFI_SSID ""
-#define WIFI_PASSWORD ""
-#define API_KEY "AIzaSyA7bFyxiaC90NKdbZTL148DIRQtPnkx3IM"
-#define DATABASE_URL "https://parking-system-b3bc7-default-rtdb.firebaseio.com/"
+#include "../include/credentials.h"
 
 #define LED_VERDE 7
 #define LED_VERMELHO 8
@@ -33,7 +29,7 @@ FirebaseConfig config;
 unsigned long sendDataPrevMillis = 0;
 bool signupOK = false;
 
-const char* validIDs[] = {"", "", ""};
+const char* validIDs[] = {""};
 const int maxInvalidAttempts = 3;
 
 int vagasDisponiveis = 1;
