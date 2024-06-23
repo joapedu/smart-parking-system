@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.ParkingApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.IoTParkingSystem" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.ParkingApp" parent="Base.Theme.ParkingApp" />
+    <style name="Theme.IoTParkingSystem" parent="Base.Theme.IoTParkingSystem" />
 </resources>

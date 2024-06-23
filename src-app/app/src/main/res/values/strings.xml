@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Parking App</string>
+    <string name="app_name">IoTParkingSystem</string>
+    <string name="atualizar">Atualizar</string>
+    <string name="wifi_conectado">WiFi Conectado: -</string>
+    <string name="vagas_dispon_veis">Vagas Disponíveis: -</string>
+    <string name="alarm_ativa_es">Alarm Ativações: -</string>
 </resources>
