@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">IoTParkingSystem</string>
-    <string name="atualizar">Atualizar</string>
-    <string name="wifi_conectado">WiFi Conectado: -</string>
-    <string name="vagas_dispon_veis">Vagas Disponíveis: -</string>
-    <string name="alarm_ativa_es">Alarm Ativações: -</string>
+    <string name="vagas_disponiveis">Vagas Disponíveis: %1$d</string>
+    <string name="ultimo_id">Último ID: %1$s</string>
+    <string name="alarm_ativacoes">Ativações de Alarme: %1$d</string>
+    <string name="ultimo_id_alarme">Último ID Alarme: %1$s</string>
+    <string name="wifi_conectado">WiFi Conectado: %1$s</string>
+    <string name="wifi_sim">Sim</string>
+    <string name="wifi_nao">Não</string>
 </resources>
