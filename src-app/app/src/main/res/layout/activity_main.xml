@@ -1,54 +1,38 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <!-- Bindings go here -->
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvVagasDisponiveis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Vagas Disponíveis: "
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvVagasDisponiveis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/tvUltimoID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Último ID: "
-        app:layout_constraintTop_toBottomOf="@id/tvVagasDisponiveis"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvUltimoID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/tvAlarmAtivacoes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ativações de Alarme: "
-        app:layout_constraintTop_toBottomOf="@id/tvUltimoID"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvAlarmAtivacoes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/tvUltimoIDAlarme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Último ID Alarme: "
-        app:layout_constraintTop_toBottomOf="@id/tvAlarmAtivacoes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvUltimoIDAlarme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/tvWifiConectado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WiFi Conectado: "
-        app:layout_constraintTop_toBottomOf="@id/tvUltimoIDAlarme"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvWifiConectado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</layout>

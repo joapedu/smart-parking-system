@@ -33,6 +33,8 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        //noinspection DataBindingWithoutKapt
+        dataBinding = true
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -40,14 +42,17 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.database)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v251)
+    implementation(libs.androidx.lifecycle.livedata.ktx.v251)
+    implementation(libs.androidx.activity.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
