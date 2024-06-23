@@ -34,6 +34,8 @@ const int maxInvalidAttempts = 3;
 
 int vagasDisponiveis = 1;
 int invalidAttempts = 0;
+String ultimoID = "";
+String ultimoIDAlarme = "";
 
 void connectWifi()
 {
@@ -69,34 +71,21 @@ void connectFirebase()
   Firebase.reconnectWiFi(true);
 }
 
-void firebaseData()
+void sendDataToFirebase() 
 {
-  if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0)) 
-  {
-    sendDataPrevMillis = millis();
-
-    String path = "/parking_system/status";
-    
-    FirebaseJson json;
-    json.set("vagasDisponiveis", vagasDisponiveis);
-    json.set("invalidAttempts", invalidAttempts);
-    FirebaseJsonArray validIDsArray;
-
-    for (int i = 0; i < sizeof(validIDs) / sizeof(validIDs[0]); i++) 
+  if (millis() - sendDataPrevMillis > 5000) 
+  { 
+    if (Firebase.ready()) 
     {
-      validIDsArray.add(validIDs[i]);
-    }
-    json.set("validIDs", validIDsArray);
+      Firebase.RTDB.setInt(&fbdo, "/vagasDisponiveis", vagasDisponiveis);
+      Firebase.RTDB.setString(&fbdo, "/ultimoID", ultimoID);
+      Firebase.RTDB.setBool(&fbdo, "/wifiConectado", WiFi.status() == WL_CONNECTED);
+      Firebase.RTDB.setInt(&fbdo, "/alarmAtivacoes", invalidAttempts);
+      Firebase.RTDB.setString(&fbdo, "/ultimoIDAlarme", ultimoIDAlarme);
 
-    if (Firebase.RTDB.setJSON(&fbdo, path.c_str(), &json)) 
-    {
-      Serial.println("Dados enviados com sucesso!");
+      sendDataPrevMillis = millis(); 
     } 
-    else 
-    {
-      Serial.print("Falha ao enviar dados: ");
-      Serial.println(fbdo.errorReason().c_str());
-    }
+    else { Serial.println(fbdo.errorReason().c_str()); }
   }
 }
 
@@ -145,12 +134,8 @@ void acessoLiberado(String id)
   vagasDisponiveis--;
   atualizaStatusVagas();
 
-  String path = "/parking_system/logs";
-  FirebaseJson log;
-  log.set("id", id);
-  log.set("status", "acesso liberado");
-  log.set("timestamp", millis());
-  Firebase.RTDB.pushJSON(&fbdo, path.c_str(), &log);
+  ultimoID = id;
+  sendDataToFirebase();
 }
 
 void acessoNegado() 
@@ -174,13 +159,10 @@ void acessoNegado()
     tone(BUZZER, 1000, 2000); 
     lcd.setCursor(0, 1);
     lcd.print("TENTATIVAS EXCEDIDAS");
+    
+    ultimoIDAlarme = ultimoID;
+    sendDataToFirebase();
   }
-
-  String path = "/parking_system/logs";
-  FirebaseJson log;
-  log.set("status", "acesso negado");
-  log.set("timestamp", millis());
-  Firebase.RTDB.pushJSON(&fbdo, path.c_str(), &log);
 }
 
 void validaCartao(String id) 
@@ -207,8 +189,9 @@ void monitorarVagas()
   {
     vagasDisponiveis++;
     atualizaStatusVagas();
+    sendDataToFirebase();
   }
-} 
+}
 
 void setup() 
 {
@@ -238,6 +221,7 @@ void setup()
 void loop() 
 {
   monitorarVagas();
+  sendDataToFirebase();
 
   if (vagasDisponiveis > 0) 
   {
@@ -249,6 +233,5 @@ void loop()
     }
   }
 
-  firebaseData();
   delay(500);
 }

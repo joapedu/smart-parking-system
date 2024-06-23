@@ -3,7 +3,7 @@
 
 const char* WIFI_SSID     = "";
 const char* WIFI_PASSWORD = "";
-const char* API_KEY       = "AIzaSyA7bFyxiaC90NKdbZTL148DIRQtPnkx3IM";
-const char* DATABASE_URL  = "https://parking-system-b3bc7-default-rtdb.firebaseio.com/";
+const char* API_KEY       = "AIzaSyCG2YMk2Yfz4ZZsp7ib5ZYg6qanfhmV78U";
+const char* DATABASE_URL  = "https://iot-parking-system-36475-default-rtdb.firebaseio.com/";
 
 #endif
