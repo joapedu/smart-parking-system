@@ -64,7 +64,10 @@ void connectFirebase()
     Serial.println("SignUp OK");
     signupOK = true;
   }
-  else { Serial.printf("%s\n", config.signer.signupError.message.c_str()); }
+  else
+  {
+    Serial.printf("%s\n", config.signer.signupError.message.c_str());
+  }
 
   config.token_status_callback = tokenStatusCallback;
   Firebase.begin(&config, &auth);
@@ -85,7 +88,10 @@ void sendDataToFirebase()
 
       sendDataPrevMillis = millis(); 
     } 
-    else { Serial.println(fbdo.errorReason().c_str()); }
+    else
+    {
+      Serial.println(fbdo.errorReason().c_str());
+    }
   }
 }
 
@@ -98,7 +104,10 @@ void atualizaStatusVagas()
     lcd.print("VAGAS DISPONIVEIS: ");
     lcd.print(vagasDisponiveis);
   } 
-  else { lcd.print("VAGAS INDISPONIVEIS"); }
+  else 
+  {
+    lcd.print("VAGAS INDISPONIVEIS");
+  }
 }
 
 String leCartaoRFID() 
@@ -178,7 +187,14 @@ void validaCartao(String id)
     }
   }
 
-  if (valido) { acessoLiberado(id); } else { acessoNegado(); }
+  if (valido) 
+  {
+    acessoLiberado(id);
+  } 
+  else 
+  {
+    acessoNegado();
+  }
 }
 
 void monitorarVagas() 
