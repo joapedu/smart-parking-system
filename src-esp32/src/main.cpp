@@ -87,7 +87,7 @@ void sendDataToFirebase()
         json.set("/tentativasInvalidas", invalidAttempts);
         json.set("/ativacoesAlarme", alarmActvations);
         json.set("/ultimoIDInvalido", lastInvalidID.c_str());
-        json.set("/wifiStatus", getWifiStatus() ? "connected" : "disconnected");
+        json.set("/wifiConectado", getWifiStatus());
         Firebase.updateNode(fbdo, "/", json);
     }
 }
