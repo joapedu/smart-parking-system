@@ -29,7 +29,7 @@
 
 <br><div align="center">
 
-  <h3>Using ESP32­-WROOM­-32</h3>   
+  <h3>Using ESP­-WROOM­-32</h3>   
   
   | Compenent               | Component Pin | ESP32 Pin |
   |:-----------------------:|:-------------:|:---------:|
