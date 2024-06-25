@@ -1,255 +1,256 @@
 #include <WiFi.h>
 #include <Wire.h>
+#include <Servo.h>
 #include <MFRC522.h>
-#include <ESP32Servo.h> 
 #include <FirebaseESP32.h>
 #include <LiquidCrystal_I2C.h>
 
 #include "addons/RTDBHelper.h"
 #include "addons/TokenHelper.h"
-#include "../include/credentials.h"
+#include "./credentials.h"
 
-#define GREEN_LED 7
-#define RED_LED 8
-#define BUZZER 36
-#define SENSOR_FC51 17
+#define GREEN_LED 26
+#define RED_LED 27
+#define BUZZER 34
+#define SENSOR_FC51 32
 #define SERVO_PIN 13
-#define RST_PIN 15
+#define RST_PIN 33
 #define SS_PIN 4
 
-LiquidCrystal_I2C lcd(0x27, 20, 4);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 MFRC522 rfid(SS_PIN, RST_PIN);
 Servo servoMotor;
 
-FirebaseData   fbdo;
-FirebaseAuth   auth;
+FirebaseData fbdo;
+FirebaseAuth auth;
 FirebaseConfig config;
 
 unsigned long sendDataPrevMillis = 0;
-bool          signupOK           = false;
-const char*   validIDs[]         = {""};
-const int     maxInvalidAttempts = 3;
+bool signupOK                    = false;
+const char* validIDs[]           = {"6387FC94"};
+const int maxInvalidAttempts     = 3;
 
-int    emptyParkingSpaces  = 1;
-int    invalidAttempts     = 0;
-int    alarmActvations     = 0;
-String lastID              = "";
-String lastInvalidID       = "";
+int emptyParkingSpaces = 1;
+int invalidAttempts    = 0;
+int alarmActvations    = 0;
+int cardReadAttempts   = 0;
+String lastID          = "";
+String lastInvalidID   = "";
+bool wifiConnected     = false;
 
-void connectWifi()
+void connectWifi() 
 {
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Connecting to WiFi");
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    Serial.print("Connecting to WiFi");
 
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    Serial.print(".");
-    delay(1000);
-  }
+    while (WiFi.status() != WL_CONNECTED) 
+    {
+        Serial.print(".");
+        delay(1000);
+    }
 
-  Serial.println();
-  Serial.print("Connected with IP: ");
-  Serial.println(WiFi.localIP());
+    Serial.println();
+    Serial.print("Connected with IP: ");
+    Serial.println(WiFi.localIP());
+    wifiConnected = true;
 }
 
-void connectFirebase()
+bool getWifiStatus() 
 {
-  config.host        = DATABASE_URL;
-  config.api_key     = API_KEY;
-  auth.user.email    = USER_EMAIL;
-  auth.user.password = USER_PASSWORD;
-
-  Firebase.begin(&config, &auth);
-  Firebase.reconnectWiFi(true);
-
-  if (Firebase.ready()) 
-  {
-    Serial.println("Connected to Firebase");
-  } 
-  else { Serial.println("Firebase not coneccted"); }
+    return WiFi.status() == WL_CONNECTED;
 }
 
-void sendDataToFirebase()
+void connectFirebase() 
 {
-  if (Firebase.ready()) 
-  {
-    if (!Firebase.setInt(fbdo, "/vagasDisponiveis", emptyParkingSpaces)) 
-    {
-      Serial.print("Erro ao enviar emptyParkingSpaces: ");
-      Serial.println(fbdo.errorReason().c_str());
-    }
+    config.host = DATABASE_URL;
+    config.api_key = API_KEY;
+    auth.user.email = USER_EMAIL;
+    auth.user.password = USER_PASSWORD;
 
-    if (!Firebase.setString(fbdo, "/ultimoID", lastID.c_str())) 
-    {
-      Serial.print("Erro ao enviar lastID: ");
-      Serial.println(fbdo.errorReason().c_str());
-    }
+    Firebase.begin(&config, &auth);
+    Firebase.reconnectWiFi(true);
 
-    if (!Firebase.setString(fbdo, "/ultimoIDAlarme", lastInvalidID.c_str())) 
+    if (Firebase.ready()) 
     {
-      Serial.print("Erro ao enviar lastInvalidID: ");
-      Serial.println(fbdo.errorReason().c_str());
-    }
+        Serial.println("Connected to Firebase");
+    } 
+    else { Serial.println("Firebase not connected"); }
+}
 
-    if (!Firebase.setInt(fbdo, "/alarmAtivacoes", alarmActvations)) 
+void sendDataToFirebase() 
+{
+    if (Firebase.ready()) 
     {
-      Serial.print("Erro ao enviar alarmActvations: ");
-      Serial.println(fbdo.errorReason().c_str());
+        FirebaseJson json;
+        json.set("/vagasDisponiveis", emptyParkingSpaces);
+        json.set("/ultimoID", lastID.c_str());
+        json.set("/tentativasInvalidas", invalidAttempts);
+        json.set("/ativacoesAlarme", alarmActvations);
+        json.set("/ultimoIDInvalido", lastInvalidID.c_str());
+        json.set("/wifiStatus", getWifiStatus() ? "connected" : "disconnected");
+        Firebase.updateNode(fbdo, "/", json);
     }
-
-    bool isWiFiConnected = WiFi.status() == WL_CONNECTED;
-    if (!Firebase.setBool(fbdo, "/wifiConectado", isWiFiConnected)) 
-    {
-      Serial.print("Erro ao enviar isWiFiConnected: ");
-      Serial.println(fbdo.errorReason().c_str());
-    }
-  } 
-  else { Serial.println("Firebase não está pronto"); }
 }
 
 void updateParkingLotStatus() 
 {
-  lcd.setCursor(0, 1);
-
-  if (emptyParkingSpaces > 0) 
-  {
-    lcd.print("VAGAS DISPONIVEIS: ");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Vagas: ");
     lcd.print(emptyParkingSpaces);
-  } 
-  else { lcd.print("VAGAS INDISPONIVEIS"); }
 }
 
-String readRFIDCard() 
+void alarm() 
 {
-  String content = "";
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(BUZZER, HIGH);
+    delay(5000);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(BUZZER, LOW);
+    alarmActvations++;
+    sendDataToFirebase();
+}
 
-  for (byte i = 0; i < rfid.uid.size; i++) 
-  {
-    content += String(rfid.uid.uidByte[i], HEX);
-  }
-  content.toUpperCase();
-  return content;
+void moveServoSlowly(int targetPosition)
+{
+    int currentPos = servoMotor.read();
+    int increment = (targetPosition > currentPos) ? 1 : -1;
+    
+    for (int pos = currentPos; pos != targetPosition; pos += increment)
+    {
+        servoMotor.write(pos);
+        delay(15);  
+    }
+    servoMotor.write(targetPosition); 
 }
 
 void accessFree(String id) 
 {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("ACESSO LIBERADO");
-  lcd.setCursor(0, 1);
-  lcd.print("ID DO CARTAO: ");
-  lcd.print(id);
-
-  digitalWrite(GREEN_LED, HIGH);
-  servoMotor.write(90); 
-  delay(2000); 
-  servoMotor.write(0); 
-  digitalWrite(GREEN_LED, LOW);
-
-  emptyParkingSpaces--;
-  updateParkingLotStatus();
-  lastID= id;
-  sendDataToFirebase();
+    lastID = id;
+    emptyParkingSpaces--;
+    updateParkingLotStatus();
+    sendDataToFirebase();
+    moveServoSlowly(90);
+    unsigned long startTime = millis();
+    
+    while (millis() - startTime < 15000) 
+    {
+        if (digitalRead(SENSOR_FC51) == LOW) 
+        {
+            emptyParkingSpaces = 0;
+            break;
+        }
+        delay(100);
+    }
+    moveServoSlowly(0);
 }
 
 void accessDenied() 
 {
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("ACESSO NEGADO");
-
-  digitalWrite(RED_LED, HIGH);
-  delay(500);
-  digitalWrite(RED_LED, LOW);
-  delay(500);
-  digitalWrite(RED_LED, HIGH);
-  delay(500);
-  digitalWrite(RED_LED, LOW);
-
-  invalidAttempts++;
-
-  if (invalidAttempts >= maxInvalidAttempts) 
-  {
-    tone(BUZZER, 1000, 2000); 
-    lcd.setCursor(0, 1);
-    lcd.print("TENTATIVAS EXCEDIDAS");
-
-    alarmActvations++;
-    lastInvalidID = lastID;
+    invalidAttempts++;
+    alarm();
     sendDataToFirebase();
-  }
+}
+
+String readRFIDCard() 
+{
+    String id = "";
+    
+    for (byte i = 0; i < rfid.uid.size; i++) 
+    {
+        id += String(rfid.uid.uidByte[i], HEX);
+    }
+    id.toUpperCase();
+    return id;
 }
 
 void cardValidate(String id) 
 {
-  bool isValid = false;
-
-  for (int i = 0; i < sizeof(validIDs) / sizeof(validIDs[0]); i++) 
-  {
-    if (id == validIDs[i]) 
+    bool isValid = false;
+    
+    for (int i = 0; i < (sizeof(validIDs) / sizeof(validIDs[0])); i++) 
     {
-      isValid = true;
-      break;
+        if (id == validIDs[i]) 
+        {
+            isValid = true;
+            break;
+        }
     }
-  }
 
-  if (isValid) { accessFree(id); } else { accessDenied(); }
+    if (isValid) 
+    {
+        accessFree(id);
+        cardReadAttempts = 0; 
+    } 
+    else 
+    {
+        lastInvalidID = id;
+        cardReadAttempts++;
+        
+        if (cardReadAttempts >= 3) 
+        {
+            accessDenied();
+            cardReadAttempts = 0; 
+        } 
+        else 
+        {
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("TENTE NOVAMENTE");
+        }
+    }
 }
 
 void parkingLotMonitor() 
 {
-  int sensorState = digitalRead(SENSOR_FC51);
-
-  if (sensorState == LOW && emptyParkingSpaces < 1) 
-  {
-    emptyParkingSpaces++;
+    int sensorState = digitalRead(SENSOR_FC51);
+    
+    if (sensorState == LOW) 
+    {
+        emptyParkingSpaces = 0;
+    } 
+    else { emptyParkingSpaces = 1; }
+    
     updateParkingLotStatus();
     sendDataToFirebase();
-  }
 }
 
 void setup() 
 {
-  Serial.begin(115200);
-  
-  connectWifi();
-  connectFirebase();
+    Serial.begin(115200);
 
-  pinMode(GREEN_LED, OUTPUT);
-  pinMode(RED_LED, OUTPUT);
-  pinMode(BUZZER, OUTPUT);
-  pinMode(SENSOR_FC51, INPUT);
-  servoMotor.attach(SERVO_PIN);
+    connectWifi();
+    connectFirebase();
 
-  lcd.begin(0x27, 20, 4);
-  lcd.backlight();
-  lcd.setCursor(0, 0);
-  lcd.print("SISTEMA DE ESTACIONAMENTO");
+    pinMode(GREEN_LED, OUTPUT);
+    pinMode(RED_LED, OUTPUT);
+    pinMode(BUZZER, OUTPUT);
+    pinMode(SENSOR_FC51, INPUT);
+    servoMotor.attach(SERVO_PIN);
 
-  SPI.begin();
-  rfid.PCD_Init();
-  servoMotor.write(0);
+    lcd.init();
+    lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("SISTEMA DE ESTACIONAMENTO");
 
-  updateParkingLotStatus();
+    SPI.begin();
+    rfid.PCD_Init();
+    servoMotor.write(0);
+
+    updateParkingLotStatus();
 }
 
 void loop() 
 {
-  parkingLotMonitor();
+    parkingLotMonitor();
 
-  if (millis() - sendDataPrevMillis > 10000) 
-  {
-    sendDataPrevMillis = millis();
-    sendDataToFirebase();
-  }
-
-  if (emptyParkingSpaces > 0) 
-  {
-    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) 
+    if (emptyParkingSpaces > 0) 
     {
-      String cardID = readRFIDCard();
-      cardValidate(cardID);
-      rfid.PICC_HaltA();
+        if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) 
+        {
+            String cardID = readRFIDCard();
+            cardValidate(cardID);
+            rfid.PICC_HaltA();
+        }
     }
-  }
 }
