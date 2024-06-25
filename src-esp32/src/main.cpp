@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <Wire.h>
-#include <ESP32Servo.h>
 #include <MFRC522.h>
+#include <ESP32Servo.h>
 #include <FirebaseESP32.h>
 #include <LiquidCrystal_I2C.h>
 
