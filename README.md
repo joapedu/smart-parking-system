@@ -1,6 +1,6 @@
 <h1 align = "center"> Smart Parking System ESP32 </h1><br>
 
-<h2> &#128269; About the project </h2><br>
+<h2> &#128269; About the project </h2>
 
 <p>Intelligent parking system connected to firebase and managed by Android Application. The system has access card reading, parking availability, alarm system and real time monitoring.</p><br>
 
@@ -24,6 +24,46 @@
   <li>The parking space will be monitored by an infrared sensor</li>
   <li>All parking operations will be monitored through an Android application, which will inform: available parking spaces, ID of the last card used, ID of the last card declined, number of times the alarm was activated and system connection status.</li>
 </ul>
+
+<br><h2> &#128293; Firebase setup </h2>
+
+<p>Within the /include directory you must define the value of these variables in the "credentials.h" file to match the credentials of your realtime database.</p>
+<p><b>WARNING:</b> THIS IS A DEMO PROJECT. NEVER INCLUDE CREDENTIALS IN THE SOURCE CODE OF YOUR PRODUCTION PROJECT</p>
+
+````c++
+#ifndef CREDENTIALS_H
+#define CREDENTIALS_H
+
+const char* WIFI_SSID     = "";
+const char* WIFI_PASSWORD = "";
+
+const char* API_KEY       = "";
+const char* DATABASE_URL  = "";
+
+const char* USER_EMAIL    = "";
+const char* USER_PASSWORD = "";
+
+#endif
+````
+<p>Your Firebase directories must match the ones declared in this function. If you want to change them, you will also 
+need to change the name of the directories in this function and in the FirebaseRepository.kt file (responsible for collecting Firebase data in the app)</p>
+
+````c++
+void sendDataToFirebase() 
+{
+    if (Firebase.ready()) 
+    {
+        FirebaseJson json;
+        json.set("/vagasDisponiveis", emptyParkingSpaces);
+        json.set("/ultimoID", lastID.c_str());
+        json.set("/tentativasInvalidas", invalidAttempts);
+        json.set("/ativacoesAlarme", alarmActvations);
+        json.set("/ultimoIDInvalido", lastInvalidID.c_str());
+        json.set("/wifiConectado", getWifiStatus());
+        Firebase.updateNode(fbdo, "/", json);
+    }
+}
+````
 
 <br><h2> &#128295; Circuit Assembly </h2>
 
