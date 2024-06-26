@@ -15,7 +15,7 @@
 <br><h2> &#128161; How it Works? </h2>
 
 <br><p align="center">
-  <img src="https://github.com/Brevex/Smart-Parking-System-ESP32/blob/076c03dcfa8072db26ae9f7a94119233ed02e8fe/circuit/circuit.png" alt="circuit">
+  <img src="https://github.com/Brevex/Smart-Parking-System-ESP32/blob/efe7cafe0db70c078ed22324fe00f2e397b1a88d/circuit/circuit.png" alt="circuit">
 </p><br>
 
 <ul>
