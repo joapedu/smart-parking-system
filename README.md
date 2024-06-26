@@ -27,7 +27,7 @@
 
 <br><h2> &#128293; Firebase setup </h2>
 
-<p>Within the /include directory you must define the value of these variables in the "credentials.h" file to match the credentials of your realtime database.</p>
+<p>Within the <code>/include</code> directory you must define the value of these variables in the <code>credentials.h</code> file to match the credentials of your realtime database.</p>
 <p><b>WARNING:</b> THIS IS A DEMO PROJECT. NEVER INCLUDE CREDENTIALS IN THE SOURCE CODE OF YOUR PRODUCTION PROJECT</p>
 
 ````c++
@@ -46,7 +46,7 @@ const char* USER_PASSWORD = "";
 #endif
 ````
 <p>Your Firebase directories must match the ones declared in this function. If you want to change them, you will also 
-need to change the name of the directories in this function and in the FirebaseRepository.kt file (responsible for collecting Firebase data in the app)</p>
+need to change the name of the directories in this function and in the <code>FirebaseRepository.kt</code> file (responsible for collecting Firebase data in the app)</p>
 
 ````c++
 void sendDataToFirebase() 
