@@ -28,7 +28,7 @@
 <br><h2> &#128293; Firebase setup </h2>
 
 <p>Within the <code>/include</code> directory you must define the value of these variables in the <code>credentials.h</code> file to match the credentials of your realtime database.</p>
-<p><b>WARNING:</b> THIS IS A DEMO PROJECT. NEVER INCLUDE CREDENTIALS IN THE SOURCE CODE OF YOUR PRODUCTION PROJECT</p>
+<p><b>WARNING:</b> THIS IS A DEMO. NEVER INCLUDE CREDENTIALS IN THE SOURCE CODE OF YOUR PRODUCTION PROJECT</p>
 
 ````c++
 #ifndef CREDENTIALS_H
