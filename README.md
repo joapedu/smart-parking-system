@@ -25,46 +25,6 @@
   <li>All parking operations will be monitored through an Android application, which will inform: available parking spaces, ID of the last card used, ID of the last card declined, number of times the alarm was activated and system connection status.</li>
 </ul>
 
-<br><h2> &#128293; Firebase setup </h2>
-
-<p>Within the <code>/include</code> directory you must define the value of these variables in the <code>credentials.h</code> file to match the credentials of your realtime database.</p>
-<p><b>WARNING:</b> THIS IS A DEMO. <b>NEVER</b> INCLUDE CREDENTIALS IN THE SOURCE CODE OF YOUR PROJECT IN PRODUCTION</p>
-
-````c++
-#ifndef CREDENTIALS_H
-#define CREDENTIALS_H
-
-const char* WIFI_SSID     = "";
-const char* WIFI_PASSWORD = "";
-
-const char* API_KEY       = "";
-const char* DATABASE_URL  = "";
-
-const char* USER_EMAIL    = "";
-const char* USER_PASSWORD = "";
-
-#endif
-````
-<p>Your Firebase directories must match the ones declared in this function. If you want to change them, you will also 
-need to change the name of the directories in this function and in the <code>FirebaseRepository.kt</code> file (responsible for collecting Firebase data in the app)</p>
-
-````c++
-void sendDataToFirebase() 
-{
-    if (Firebase.ready()) 
-    {
-        FirebaseJson json;
-        json.set("/vagasDisponiveis", emptyParkingSpaces);
-        json.set("/ultimoID", lastID.c_str());
-        json.set("/tentativasInvalidas", invalidAttempts);
-        json.set("/ativacoesAlarme", alarmActvations);
-        json.set("/ultimoIDInvalido", lastInvalidID.c_str());
-        json.set("/wifiConectado", getWifiStatus());
-        Firebase.updateNode(fbdo, "/", json);
-    }
-}
-````
-
 <br><h2> &#128295; Circuit Assembly </h2>
 
 <br><div align="center">
