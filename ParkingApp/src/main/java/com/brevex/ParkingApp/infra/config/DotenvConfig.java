@@ -1,4 +1,4 @@
-package com.brevex.ParkingApp.config;
+package com.brevex.ParkingApp.infra.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Bean;

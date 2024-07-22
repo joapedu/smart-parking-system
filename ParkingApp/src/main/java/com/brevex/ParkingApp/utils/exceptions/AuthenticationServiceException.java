@@ -1,4 +1,4 @@
-package com.brevex.ParkingApp.service.exceptions;
+package com.brevex.ParkingApp.utils.exceptions;
 
 public class AuthenticationServiceException extends RuntimeException
 {

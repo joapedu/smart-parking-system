@@ -1,4 +1,4 @@
-package com.brevex.ParkingApp.config;
+package com.brevex.ParkingApp.infra.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
