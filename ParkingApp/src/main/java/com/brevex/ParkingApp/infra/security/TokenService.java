@@ -5,7 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.brevex.ParkingApp.model.User;
-import com.google.api.client.util.Value;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -15,8 +17,13 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService
 {
-    @Value("${api.security.token.secret}")
-    private String secret;
+    private final String secret;
+
+    @Autowired
+    public TokenService(Dotenv dotenv)
+    {
+        this.secret = dotenv.get("JWT_SECRET");
+    }
 
     public String generateToken(User user)
     {
@@ -50,7 +57,7 @@ public class TokenService
         }
         catch (JWTVerificationException exception)
         {
-            return "";
+            throw new AuthenticationServiceException("Invalid or expired token", exception);
         }
     }
 

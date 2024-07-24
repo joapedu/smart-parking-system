@@ -36,7 +36,7 @@ public class SecuritySetup
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/create").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/auth/delete").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/auth/delete").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
@@ -45,7 +45,7 @@ public class SecuritySetup
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception
     {
         return authenticationConfiguration.getAuthenticationManager();
     }

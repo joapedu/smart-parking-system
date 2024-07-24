@@ -1,28 +1,29 @@
 package com.brevex.ParkingApp.service;
 
+import com.brevex.ParkingApp.utils.classes.HttpRequestUtil;
 import com.brevex.ParkingApp.utils.enums.FirebaseEndpoint;
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public abstract class FirebaseSetupService
 {
-    protected String firebaseApiKey;
+    protected final String firebaseApiKey;
     protected final RestTemplate restTemplate;
     protected HttpHeaders headers;
 
-    public FirebaseSetupService(RestTemplate restTemplate)
+    @Autowired
+    public FirebaseSetupService(RestTemplate restTemplate, Dotenv dotenv)
     {
         this.restTemplate = restTemplate;
-        Dotenv dotenv = Dotenv.load();
         this.firebaseApiKey = dotenv.get("FIREBASE_API_KEY");
     }
 
@@ -42,16 +43,11 @@ public abstract class FirebaseSetupService
 
     protected HttpEntity<Map<String, String>> createRequestEntity(Map<String, String> body)
     {
-        return new HttpEntity<>(body, headers);
+        return HttpRequestUtil.createRequestEntity(body, headers);
     }
 
     protected HttpEntity<Map<String, String>> createAuthRequestEntity(String email, String password)
     {
-        Map<String, String> body = new HashMap<>();
-        body.put("email", email);
-        body.put("password", password);
-        body.put("returnSecureToken", "true");
-
-        return createRequestEntity(body);
+        return HttpRequestUtil.createAuthRequestEntity(email, password, headers);
     }
 }

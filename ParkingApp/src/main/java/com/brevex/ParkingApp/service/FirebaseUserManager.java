@@ -1,7 +1,9 @@
 package com.brevex.ParkingApp.service;
 
 import com.brevex.ParkingApp.utils.enums.FirebaseEndpoint;
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,10 @@ import java.util.HashMap;
 @Service
 public class FirebaseUserManager extends FirebaseSetupService
 {
-    public FirebaseUserManager(RestTemplate restTemplate)
+    @Autowired
+    public FirebaseUserManager(RestTemplate restTemplate, Dotenv dotenv)
     {
-        super(restTemplate);
+        super(restTemplate, dotenv);
     }
 
     public String createUser(@NonNull String email, @NonNull String password)
