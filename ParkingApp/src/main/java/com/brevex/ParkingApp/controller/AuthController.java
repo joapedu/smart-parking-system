@@ -20,7 +20,8 @@ public class AuthController
     @Autowired
     public AuthController(FirebaseAuthManager firebaseAuthManager,
                           FirebaseUserManager firebaseUserManager,
-                          TokenService tokenService)
+                          TokenService tokenService
+    )
     {
         this.firebaseAuthManager = firebaseAuthManager;
         this.firebaseUserManager = firebaseUserManager;
@@ -32,6 +33,7 @@ public class AuthController
     {
         User user = firebaseAuthManager.authenticateUser(email, password);
         String jwtToken = tokenService.generateToken(user);
+
         return ResponseEntity.ok(new AuthResponse(jwtToken));
     }
 
@@ -39,6 +41,7 @@ public class AuthController
     public ResponseEntity<String> createUser(@RequestParam String email, @RequestParam String password)
     {
         String userId = firebaseUserManager.createUser(email, password);
+
         return ResponseEntity.ok("User created with ID: " + userId);
     }
 
@@ -47,7 +50,9 @@ public class AuthController
     {
         String token = authHeader.substring(7);
         String email = tokenService.validateToken(token);
+
         firebaseUserManager.deleteUser(email);
+
         return ResponseEntity.ok("User deleted successfully");
     }
 }
