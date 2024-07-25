@@ -8,11 +8,24 @@
 
 <p align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=arduino,java,spring,firebase,vue" />
+    <img src="https://skillicons.dev/icons?i=java,spring,firebase,vue,arduino" />
   </a>
 </p>
 
-<br><h2> &#128161; How it Works? </h2>
+<br><h2> &#128293; Firebase setup </h2>
+
+<p>All you need to do to configure the backend with your Firebase project is to go into the <code>/ParkingApp/.env</code> directory and change the <code>FIREBASE_API_KEY</code> and <code>DATABASE_URL</code> variables</p>
+
+```markdown
+
+FIREBASE_API_KEY= ...
+
+DATABASE_URL= ...
+
+JWT_SECRET= ...
+```
+
+<br><h2> &#128161; How the Circuit Works? </h2>
 
 <br><p align="center">
   <img src="https://github.com/Brevex/Smart-Parking-System-ESP32/blob/efe7cafe0db70c078ed22324fe00f2e397b1a88d/circuit/circuit.png" alt="circuit">
