@@ -1,5 +1,8 @@
 package com.brevex.ParkingApp.utils.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum FirebaseEndpoint
 {
     SIGN_UP("accounts:signUp"),
@@ -11,10 +14,5 @@ public enum FirebaseEndpoint
     FirebaseEndpoint(String endpoint)
     {
         this.endpoint = endpoint;
-    }
-
-    public String getEndpoint()
-    {
-        return endpoint;
     }
 }

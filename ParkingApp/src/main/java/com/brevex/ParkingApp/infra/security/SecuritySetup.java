@@ -36,7 +36,8 @@ public class SecuritySetup
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/create").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/auth/delete").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/logout").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/auth/delete").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
