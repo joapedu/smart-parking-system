@@ -7,12 +7,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -29,7 +31,14 @@ public class FirebaseAuthManager extends FirebaseSetupService
         try
         {
             String url = buildUrl(FirebaseEndpoint.SIGN_IN);
-            HttpEntity<Map<String, String>> entity = createAuthRequestEntity(email, password);
+
+            Map<String, String> request = new HashMap<>();
+            request.put("email", email);
+            request.put("password", password);
+            request.put("returnSecureToken", "true");
+
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
 
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                     url,
@@ -38,12 +47,9 @@ public class FirebaseAuthManager extends FirebaseSetupService
                     new ParameterizedTypeReference<>() {}
             );
 
-            Map<String, Object> responseBody = response.getBody();
-            assert responseBody != null;
-
-            if (responseBody.containsKey("idToken"))
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null)
             {
-                String idToken = (String) responseBody.get("idToken");
+                String idToken = (String) response.getBody().get("idToken");
 
                 return new User(idToken, email, null);
             }
@@ -54,8 +60,8 @@ public class FirebaseAuthManager extends FirebaseSetupService
         }
         catch (HttpStatusCodeException e)
         {
-            throw new AuthenticationServiceException("Failed to authenticate user: "
-                    + e.getResponseBodyAsString()
+            throw new AuthenticationServiceException(
+                    "Failed to authenticate user: " + e.getResponseBodyAsString()
             );
         }
         catch (Exception e)

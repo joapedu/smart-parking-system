@@ -3,6 +3,8 @@ package com.brevex.ParkingApp.service;
 import com.brevex.ParkingApp.utils.enums.FirebaseEndpoint;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 @Service
 public class FirebaseUserManager extends FirebaseSetupService
 {
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseUserManager.class);
+
     @Autowired
     public FirebaseUserManager(RestTemplate restTemplate, Dotenv dotenv)
     {
@@ -36,10 +40,16 @@ public class FirebaseUserManager extends FirebaseSetupService
                     entity,
                     String.class
             );
+
             return response.getBody();
         }
         catch (HttpStatusCodeException e)
         {
+            logger.error(
+                    "Failed to create user: {}",
+                    e.getStatusCode(), e
+            );
+
             throw new RuntimeException("Failed to create user: " + e.getStatusCode(), e);
         }
     }
@@ -55,15 +65,26 @@ public class FirebaseUserManager extends FirebaseSetupService
 
         try
         {
-            restTemplate.exchange(
+            ResponseEntity<String> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
                     entity,
                     String.class
             );
+
+            logger.info(
+                    "User deleted successfully, response: {}",
+                    response.getBody()
+            );
         }
         catch (HttpStatusCodeException e)
         {
+            logger.error(
+                    "Failed to delete user: {} - {}",
+                    e.getStatusCode(),
+                    e.getResponseBodyAsString(), e
+            );
+
             throw new RuntimeException("Failed to delete user: " + e.getStatusCode(), e);
         }
     }
