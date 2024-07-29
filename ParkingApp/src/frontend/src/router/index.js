@@ -1,17 +1,27 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '../views/LoginPage.vue'
-import CreateUserPage from '../views/CreateUserPage.vue'
-import HomePage from '../views/HomePage.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import SignIn from '../views/HomePage.vue';
+import SignUp from '../views/SignUp.vue';
+import ParkingInfo from '../views/ParkingInfo.vue';
 
 const routes = [
-    { path: '/', name: 'Home', component: HomePage },
-    { path: '/login', name: 'Login', component: LoginPage },
-    { path: '/create-user', name: 'CreateUser', component: CreateUserPage },
-]
+    { path: '/', name: 'SignIn', component: SignIn },
+    { path: '/sign-up', name: 'SignUp', component: SignUp },
+    { path: '/parking-info', name: 'ParkingInfo', component: ParkingInfo }
+];
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes
-})
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+    const publicPages = ['/', '/sign-up'];
+    const authRequired = !publicPages.includes(to.path);
+    const loggedIn = localStorage.getItem('token');
+
+    if (authRequired && !loggedIn) { return next('/'); }
+
+    next();
+});
+
+export default router;

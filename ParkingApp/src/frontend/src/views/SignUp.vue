@@ -1,19 +1,21 @@
 <template>
   <div class="form-container">
-    <form @submit.prevent="login" class="form">
+    <form @submit.prevent="createUser" class="form">
       <router-link to="/" class="userIcon">
         <img src="@/assets/icons/user.png" alt="User Icon"/>
       </router-link>
 
       <input v-model="email" type="email" placeholder="Email" required class="input" />
+      <input v-model="confirmEmail" type="email" placeholder="Confirm Email" required class="input" />
       <input v-model="password" type="password" placeholder="Password" required class="input" />
+      <input v-model="confirmPassword" type="password" placeholder="Confirm Password" required class="input" />
 
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <button type="submit" class="button">Sign In</button>
+      <button type="submit" class="button">Sign Up</button>
 
       <div class="form-text">
-        <p>Don't have an account?</p>
-        <router-link to="/sign-up" class="form-link">Sign up here</router-link>
+        <p>Already have an account?</p>
+        <router-link to="/" class="form-link">Sign in here</router-link>
       </div>
     </form>
   </div>
@@ -29,31 +31,39 @@ export default
   setup()
   {
     const email = ref('');
+    const confirmEmail = ref('');
     const password = ref('');
+    const confirmPassword = ref('');
     const errorMessage = ref('');
     const router = useRouter();
 
-    const login = async () => {
+    const createUser = async () => {
+      if (email.value !== confirmEmail.value)
+      {
+        errorMessage.value = 'Emails do not match';
+        return;
+      }
+
+      if (password.value !== confirmPassword.value)
+      {
+        errorMessage.value = 'Passwords do not match';
+        return;
+      }
+
       try
       {
-        const response = await api.post('/login', null, {
-          params: {email: email.value, password: password.value}
+        await api.post('/create', null, {
+          params: { email: email.value, password: password.value }
         });
 
-        if (response.status === 200 && response.data.token)
-        {
-          localStorage.setItem('token', response.data.token);
-          await router.push('/parking-info');
-          window.location.reload();
-        }
+        await router.push('/parking-info');
       }
       catch (error)
       {
-        errorMessage.value = 'Incorrect login or password';
-        console.error('Erro no login:', error);
+        console.error('Erro ao criar usuário:', error);
       }
     };
-    return {email, password, login, errorMessage};
+    return { email, confirmEmail, password, confirmPassword, createUser, errorMessage };
   }
 };
 </script>

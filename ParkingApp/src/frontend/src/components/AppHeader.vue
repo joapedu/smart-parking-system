@@ -1,43 +1,87 @@
 <template>
   <header>
-    <h1>Minha Aplicação</h1>
-    <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/login">Login</router-link>
-      <router-link to="/create-user">Create User</router-link>
+    <nav class="navbar">
+      <router-link :to="logoLink" class="logo">
+        <img src="../assets/icons/navbarLogo.png" alt="Smart Parking logo" class="logo-image"/>
+      </router-link>
+      <button v-if="loggedIn" @click="logout" class="logout-button">Logout</button>
     </nav>
   </header>
 </template>
 
 <script>
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '../services/api';
+
 export default
 {
-  name: 'AppHeader'
-}
+  name: 'AppHeader',
+  setup()
+  {
+    const loggedIn = ref(localStorage.getItem('token') !== null);
+    const router = useRouter();
+
+    const logoLink = computed(() => {
+      return loggedIn.value ? '/parking-info' : '/';
+    });
+
+    const logout = async () => {
+      try {
+        await api.post('/logout', null, {
+          headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
+        });
+
+        localStorage.removeItem('token');
+        loggedIn.value = false;
+        await router.push('/');
+      }
+      catch (error)
+      {
+        console.error('Erro ao fazer logout:', error);
+      }
+    };
+
+    watch(
+        () => localStorage.getItem('token'),
+        (newValue) => {
+          loggedIn.value = newValue !== null;
+        }
+    );
+
+    return {loggedIn, logout, logoLink};
+  }
+};
 </script>
 
 <style scoped>
-header
+.navbar
 {
-  background: #42b983;
-  padding: 16px;
+  background-color: #17052A;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em;
+}
+
+.logo
+{
+  margin-left: 20px;
+}
+
+.logout-button
+{
+  padding: 0.5em 1em;
+  background-color: #080010;
   color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 20px;
 }
 
-nav
+.logout-button:hover
 {
-  margin-top: 8px;
-}
-
-nav a
-{
-  margin: 0 16px;
-  text-decoration: none;
-  color: white;
-}
-
-nav a.router-link-active
-{
-  font-weight: bold;
+  background-color: #330066;
 }
 </style>
