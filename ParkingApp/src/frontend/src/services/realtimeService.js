@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const DATABASE_URL = "https://iot-parking-system-36475-default-rtdb.firebaseio.com/";
+const DATABASE_URL = "";
 
 export const getRealtimeData = async (path) => {
     try
