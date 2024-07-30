@@ -12,6 +12,12 @@
   </a>
 </p>
 
+<br><h2> &#128187; Website </h2>
+
+<br><p align="center">
+  <img src="https://github.com/Brevex/Smart-Parking-System/blob/d97caa919aac7260bbe0c3455e2d290ad6e3340d/Readme%20Images/website.png" alt="circuit">
+</p><br>
+
 <br><h2> &#128293; Firebase setup </h2>
 
 <p>All you need to do to configure the backend with your Firebase project is to go into the <code>/ParkingApp/.env</code> directory and change the <code>FIREBASE_API_KEY</code> and <code>DATABASE_URL</code> variables</p>
@@ -24,11 +30,25 @@ DATABASE_URL= ...
 
 JWT_SECRET= ...
 ```
+<p>Then go to the <code>/ParkingApp/src/frontend/src/script/firebase.js</code> directory and insert your database URL</p>
+
+```javascript
+
+const firebaseConfig = {
+    databaseURL: ""
+};
+```
+<p>Finally, go to the <code>/ParkingApp/src/frontend/src/services/realtimeService.js</code> directory and insert your database URL</p>
+
+```javascript
+
+const DATABASE_URL = "";
+```
 
 <br><h2> &#128161; How the Circuit Works? </h2>
 
 <br><p align="center">
-  <img src="https://github.com/Brevex/Smart-Parking-System-ESP32/blob/efe7cafe0db70c078ed22324fe00f2e397b1a88d/circuit/circuit.png" alt="circuit">
+  <img src="https://github.com/Brevex/Smart-Parking-System/blob/4715389b39cf3b1a29214f681eaa7c9dc0345f23/Readme%20Images/circuit.png" alt="circuit">
 </p><br>
 
 <ul>
