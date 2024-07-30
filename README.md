@@ -2,7 +2,7 @@
 
 <h2> &#128269; About the project </h2>
 
-<p>Intelligent parking system connected to firebase and managed by Android Application. The system has access card reading, parking availability, alarm system and real time monitoring.</p><br>
+<p>Intelligent parking system connected to firebase and managed by a realtime web application. The system has access card reading, parking availability, alarm system and real time monitoring.</p><br>
 
 <h2> &#128302; Technologies Used </h2><br>
 
@@ -14,11 +14,13 @@
 
 <br><h2> &#128187; Website </h2>
 
-<br><p align="center">
-  <img src="https://github.com/Brevex/Smart-Parking-System/blob/d97caa919aac7260bbe0c3455e2d290ad6e3340d/Readme%20Images/website.png" alt="circuit">
-</p><br>
+<p>Once authenticated in the system, this will be the page with information about the parking lot. All data is updated in real time.</p><br>
 
-<br><h2> &#128293; Firebase setup </h2>
+<p align="center">
+  <img src="https://github.com/Brevex/Smart-Parking-System/blob/d97caa919aac7260bbe0c3455e2d290ad6e3340d/Readme%20Images/website.png" alt="circuit">
+</p>
+
+<h2> &#128293; Firebase setup </h2>
 
 <p>All you need to do to configure the backend with your Firebase project is to go into the <code>/ParkingApp/.env</code> directory and change the <code>FIREBASE_API_KEY</code> and <code>DATABASE_URL</code> variables</p>
 
